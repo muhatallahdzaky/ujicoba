@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'koneksi.php';
+include '../koneksi.php';
 
 // --- LOGIC ---
 $jumlahKonserOtw = 0;
@@ -34,14 +34,14 @@ $queryAktivitasAtmin = @$koneksi->query("SELECT * FROM log_aktivitas ORDER BY id
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-  <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../../css/styles.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
 
-  <?php include 'header.php'; ?>
+  <?php include '../header.php'; ?>
 
-  <div class="d-flex-wrapper"><?php include 'sideBar.php'; ?>
+  <div class="d-flex-wrapper"><?php include '../sideBar.php'; ?>
 
     <div class="main-content">
       <h4 class="mb-4 fw-bold">Quick Stats</h4>
@@ -112,7 +112,7 @@ $queryAktivitasAtmin = @$koneksi->query("SELECT * FROM log_aktivitas ORDER BY id
     </div>
   </div>
 
-  <?php include 'footer.php'; ?>
+  <?php include '../footer.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

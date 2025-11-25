@@ -2,11 +2,7 @@
 $current_page = basename($_SERVER['PHP_SELF']);
 $directoryURI = $_SERVER['REQUEST_URI'];
 
-if ($current_page == 'indexDashboard.php') {
-    $path = ""; // Tidak perlu mundur
-} else {
-    $path = "../"; // Mundur satu langkah dulu
-}
+$path = "../"; // Mundur satu langkah dulu
 
 // Fungsi cek aktif
 function isActive($searchString) {

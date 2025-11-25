@@ -62,7 +62,7 @@ $user_role = $is_logged_in ? $_SESSION['role'] : '';
 
                         <?php if ($_SESSION['role'] == 'admin'): ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="/WebKonserProjek/halamanAdmin/dashboard/html/indexDashboard.php">
+                                <a class="nav-link" href="/WebKonserProjek/halamanAdmin/dashboard/html/folderDH/indexDashboard.php">
                                     <i class="bi bi-speedometer2"></i> Dashboard
                                 </a>
                             </li>
