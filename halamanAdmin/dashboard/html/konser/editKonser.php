@@ -11,11 +11,10 @@ if (!$data) die("Data tidak ditemukan!");
 
 if (isset($_POST['update'])) {
     $baseDir = dirname(__DIR__, 4) . "/uploads/";
-    $dirPoster     = $baseDir . "posterPict/";
-    $dirTrailer    = $baseDir . "trailerPict/";
-    $dirAftermovie = $baseDir . "aftermoviePict/";
-
-    function cekUpload($inputName, $folder, $oldFile) {
+    $dirPoster   = $baseDir . "posterPict/";
+    $dirVideo    = $baseDir . "trailerPict/";
+    function cekUpload($inputName, $folder, $oldFile)
+    {
         if (!empty($_FILES[$inputName]['name'])) {
             $name = $_FILES[$inputName]['name'];
             $tmp  = $_FILES[$inputName]['tmp_name'];
@@ -33,10 +32,9 @@ if (isset($_POST['update'])) {
     $status = ($_POST['tanggal_mulai'] > date('Y-m-d H:i:s')) ? 'upcoming' : 'completed';
 
     $poster_fix     = cekUpload('poster', $dirPoster, $data['poster_konser']);
-    $trailer_fix    = cekUpload('video_trailer', $dirTrailer, $data['video_trailer']);
-    $aftermovie_fix = cekUpload('video_aftermovie', $dirAftermovie, $data['video_aftermovie']);
+    $video_fix    = cekUpload('video_trailer', $dirTrailer, $data['video']);
 
-    $q = "UPDATE konser SET nama_konser='$nama', id_venue='".$_POST['id_venue']."', tanggal_mulai='".$_POST['tanggal_mulai']."', tanggal_selesai='".$_POST['tanggal_selesai']."', harga_tiket_mulai='".$_POST['harga_tiket']."', info_harga_tiket='".$_POST['info_harga']."', deskripsi='".$_POST['deskripsi']."', poster_konser='$poster_fix', video_trailer='$trailer_fix', video_aftermovie='$aftermovie_fix', status_konser='$status' WHERE id_konser='$id'";
+    $q = "UPDATE konser SET nama_konser='$nama', id_venue='" . $_POST['id_venue'] . "', tanggal_mulai='" . $_POST['tanggal_mulai'] . "', tanggal_selesai='" . $_POST['tanggal_selesai'] . "', harga_tiket_mulai='" . $_POST['harga_tiket'] . "', link_tiket='" . $_POST['link_tiket'] . "', poster_konser='$poster_fix', video='$video_fix', status_konser='$status' WHERE id_konser='$id'";
 
     if (mysqli_query($koneksi, $q)) {
         $admin = $_SESSION['nama_admin'] ?? 'Admin';
@@ -50,19 +48,44 @@ if (isset($_POST['update'])) {
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Edit Konser</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/styles.css">
     <style>
-        .form-control, .form-select { background-color: #2c3e50; color: white; border: 1px solid #4a5f7f; }
-        .form-control:focus { background-color: #34495e; color: white; border-color: #3498db; }
-        label { color: #bdc3c7; margin-bottom: 5px; }
-        .img-preview { width: 100px; margin-top: 5px; border: 1px solid #555; }
-        input[type=file] { background-color: #2c3e50; color: #bdc3c7; }
+        .form-control,
+        .form-select {
+            background-color: #2c3e50;
+            color: white;
+            border: 1px solid #4a5f7f;
+        }
+
+        .form-control:focus {
+            background-color: #34495e;
+            color: white;
+            border-color: #3498db;
+        }
+
+        label {
+            color: #bdc3c7;
+            margin-bottom: 5px;
+        }
+
+        .img-preview {
+            width: 100px;
+            margin-top: 5px;
+            border: 1px solid #555;
+        }
+
+        input[type=file] {
+            background-color: #2c3e50;
+            color: #bdc3c7;
+        }
     </style>
 </head>
+
 <body>
     <?php include '../header.php'; ?>
     <div class="d-flex-wrapper">
@@ -83,9 +106,9 @@ if (isset($_POST['update'])) {
                                     <option value="">-- Pilih Venue --</option>
                                     <?php
                                     $vQ = mysqli_query($koneksi, "SELECT id_venue, nama_venue FROM venue ORDER BY nama_venue ASC");
-                                    while($v = mysqli_fetch_assoc($vQ)){
+                                    while ($v = mysqli_fetch_assoc($vQ)) {
                                         $sel = ($v['id_venue'] == $data['id_venue']) ? 'selected' : '';
-                                        echo "<option value='".$v['id_venue']."' $sel>".$v['nama_venue']."</option>";
+                                        echo "<option value='" . $v['id_venue'] . "' $sel>" . $v['nama_venue'] . "</option>";
                                     }
                                     ?>
                                 </select>
@@ -93,11 +116,14 @@ if (isset($_POST['update'])) {
                             <div class="col-md-6"><label>Mulai</label><input type="datetime-local" class="form-control" name="tanggal_mulai" value="<?= date('Y-m-d\TH:i', strtotime($data['tanggal_mulai'])) ?>" required></div>
                             <div class="col-md-6"><label>Selesai</label><input type="datetime-local" class="form-control" name="tanggal_selesai" value="<?= date('Y-m-d\TH:i', strtotime($data['tanggal_selesai'])) ?>" required></div>
                             <div class="col-md-6"><label>Harga</label><input type="number" class="form-control" name="harga_tiket" value="<?= $data['harga_tiket_mulai'] ?>" required></div>
-                            <div class="col-md-6"><label>Info</label><input type="text" class="form-control" name="info_harga" value="<?= htmlspecialchars($data['info_harga_tiket']) ?>"></div>
-                            <div class="col-12"><label>Deskripsi</label><textarea class="form-control" name="deskripsi" rows="3"><?= htmlspecialchars($data['deskripsi']) ?></textarea></div>
-                            <div class="col-md-4"><label>Ganti Poster</label><input type="file" class="form-control" name="poster"> <?php if($data['poster_konser']) echo "<img src='../../../../uploads/posterPict/{$data['poster_konser']}' class='img-preview'>"; ?></div>
-                            <div class="col-md-4"><label>Ganti Trailer</label><input type="file" class="form-control" name="video_trailer"></div>
-                            <div class="col-md-4"><label>Ganti Aftermovie</label><input type="file" class="form-control" name="video_aftermovie"></div>
+                            <div class="col-md-6"><label>Link Tiket</label><input type="text" class="form-control" name="link_tiket" value="<?= $data['link_tiket'] ?>" required></div>
+                            <div class="col-md-4"><label>Ganti Poster</label><input type="file" class="form-control" name="poster"><br>
+                                <?php if ($data['poster_konser']): ?>
+                                    <img src="/WebKonserProjek/<?= $data['poster_konser']; ?>" class="preview" width="100%">
+                                    <small class="text-muted">Foto saat ini</small>
+                                <?php endif; ?>
+                            </div>
+                            <div class="col-md-4"><label>Ganti Video</label><input type="file" class="form-control" name="video_trailer"></div>
                             <div class="col-12 text-end mt-4"><button type="submit" name="update" class="btn btn-primary px-4">Simpan Perubahan</button></div>
                         </div>
                     </form>
@@ -108,4 +134,5 @@ if (isset($_POST['update'])) {
     <?php include '../footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

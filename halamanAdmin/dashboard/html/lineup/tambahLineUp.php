@@ -21,14 +21,8 @@ if (isset($_POST['simpan'])) {
     $konser = $_POST['id_konser'];
     $artis  = $_POST['id_artis'];
 
-    if (empty($_POST['jadwal_tampil'])) {
-        $jadwal = "NULL"; // Nilai NULL SQL (tanpa kutip)
-    } else {
-        $jadwal = "'" . mysqli_real_escape_string($koneksi, $_POST['jadwal_tampil']) . "'"; // Nilai DATETIME (dengan kutip)
-    }
-
-    $query = "INSERT INTO lineup (id_lineup, id_konser, id_artis, jadwal_tampil)
-              VALUES ('$idBaru', '$konser', '$artis', $jadwal)";
+    $query = "INSERT INTO lineup (id_lineup, id_konser, id_artis)
+              VALUES ('$idBaru', '$konser', '$artis')";
 
     if ($koneksi->query($query)) {
         $admin = $_SESSION['nama_admin'] ?? 'Admin';
@@ -87,11 +81,6 @@ if (isset($_POST['simpan'])) {
                                         <option value="<?= $a['id_artis']; ?>"><?= $a['nama_artis']; ?></option>
                                     <?php } ?>
                                 </select>
-                            </div>
-
-                            <div class="col-md-12">
-                                <label>Jadwal Tampil</label>
-                                <input type="datetime-local" name="jadwal_tampil" class="form-control">
                             </div>
 
                             <div class="col-12 text-end mt-4">

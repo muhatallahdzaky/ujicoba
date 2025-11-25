@@ -5,7 +5,8 @@ $directoryURI = $_SERVER['REQUEST_URI'];
 $path = "../"; // Mundur satu langkah dulu
 
 // Fungsi cek aktif
-function isActive($searchString) {
+function isActive($searchString)
+{
     global $directoryURI;
     if (strpos($directoryURI, $searchString) !== false) {
         return 'active';
@@ -13,6 +14,7 @@ function isActive($searchString) {
     return '';
 }
 ?>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <div class="sidebar bg-dark-sidebar">
     <ul class="nav flex-column">

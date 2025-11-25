@@ -204,8 +204,8 @@ include '../includes/header.php';
                     <!-- Demo Accounts Info -->
                     <div class="demo-accounts">
                         <h6><i class="bi bi-info-circle"></i> Demo Accounts:</h6>
-                        <p><strong>Admin:</strong> admin@concertix.com / admin123</p>
-                        <p><strong>User:</strong> bahlil@gmail.com / pertaminarugi</p>
+                        <p><strong>Admin:</strong> adminfo1@gmail.com / adminFo123</p>
+                        <p><strong>User:</strong> puan@gmail.com / dprturu</p>
                     </div>
 
                     <?php if ($error): ?>

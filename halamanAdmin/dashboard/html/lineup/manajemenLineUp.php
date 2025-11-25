@@ -45,7 +45,6 @@ $result = $koneksi->query($query);
                                 <th>ID</th>
                                 <th>Nama Konser</th>
                                 <th>Nama Artis</th>
-                                <th>Jadwal Tampil</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -55,15 +54,6 @@ $result = $koneksi->query($query);
                                 <td><span class="badge bg-secondary"><?= $row['id_lineup']; ?></span></td>
                                 <td class="fw-bold"><?= htmlspecialchars($row['nama_konser']); ?></td>
                                 <td><?= htmlspecialchars($row['nama_artis']); ?></td>
-                                <td>
-                                    <?php
-                                    if($row['jadwal_tampil']) {
-                                        echo date('d M Y, H:i', strtotime($row['jadwal_tampil'])) . " WIB";
-                                    } else {
-                                        echo "<span class='text-muted'>-</span>";
-                                    }
-                                    ?>
-                                </td>
                                 <td class="text-center">
                                     <div class="d-flex gap-2 justify-content-center">
                                         <a href="editLineUp.php?id=<?= $row['id_lineup']; ?>" class="btn btn-sm btn-warning text-white" title="Edit"><i class="bi bi-pencil"></i></a>

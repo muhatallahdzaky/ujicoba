@@ -71,7 +71,10 @@ if (isset($_POST['simpan'])) {
     <div class="d-flex-wrapper">
         <?php include '../sideBar.php'; ?>
         <div class="main-content">
-            <h4 class="fw-bold text-white mb-4">Tambah Wishlist</h4>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold text-white">Tambah Wishlist</h4>
+                <a href="manajemenWishlist.php" class="btn btn-secondary btn-sm">Kembali</a>
+            </div>
             <div class="card stats-card border-0">
                 <div class="card-body">
                     <form method="POST">

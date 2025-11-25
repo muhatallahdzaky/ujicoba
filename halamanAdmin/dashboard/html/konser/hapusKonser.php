@@ -16,12 +16,8 @@ if (isset($_GET['id'])) {
             $f = $baseDir . "posterPict/" . $data['poster_konser'];
             if (file_exists($f)) unlink($f);
         }
-        if (!empty($data['video_trailer'])) {
-            $f = $baseDir . "trailerPict/" . $data['video_trailer'];
-            if (file_exists($f)) unlink($f);
-        }
-        if (!empty($data['video_aftermovie'])) {
-            $f = $baseDir . "aftermoviePict/" . $data['video_aftermovie'];
+        if (!empty($data['video'])) {
+            $f = $baseDir . "trailerPict/" . $data['video'];
             if (file_exists($f)) unlink($f);
         }
 

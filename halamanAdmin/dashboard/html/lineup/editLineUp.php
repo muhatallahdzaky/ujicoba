@@ -13,12 +13,10 @@ $dataArtis  = $koneksi->query("SELECT id_artis, nama_artis FROM artis ORDER BY n
 if (isset($_POST['update'])) {
     $konser = $_POST['id_konser'];
     $artis  = $_POST['id_artis'];
-    $jadwal = !empty($_POST['jadwal_tampil']) ? $_POST['jadwal_tampil'] : "NULL";
 
     $q = "UPDATE lineup SET
           id_konser='$konser',
           id_artis='$artis',
-          jadwal_tampil='$jadwal'
           WHERE id_lineup='$id'";
 
     if ($koneksi->query($q)) {
@@ -80,11 +78,6 @@ if (isset($_POST['update'])) {
                                         </option>
                                     <?php } ?>
                                 </select>
-                            </div>
-
-                            <div class="col-md-12">
-                                <label>Jadwal Tampil</label>
-                                <input type="datetime-local" name="jadwal_tampil" class="form-control" value="<?= $data['jadwal_tampil']; ?>" required>
                             </div>
 
                             <div class="col-12 text-end mt-4">

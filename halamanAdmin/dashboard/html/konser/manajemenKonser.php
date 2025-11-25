@@ -3,7 +3,7 @@ session_start();
 include '../koneksi.php'; // Mundur 1 langkah ke html/
 
 // Query Data
-$queryTampilkanSemua = $koneksi->query("SELECT * FROM konser ORDER BY tanggal_mulai ASC");
+$queryTampilkanSemua = $koneksi->query("SELECT * FROM konser ORDER BY id_konser ASC");
 
 if (!$queryTampilkanSemua) {
     die("Gagal Query: " . $koneksi->error);
@@ -47,12 +47,10 @@ if (!$queryTampilkanSemua) {
                                 <th>Venue</th>
                                 <th>Mulai</th>
                                 <th>Selesai</th>
-                                <th class="col-deskripsi">Deskripsi</th>
-                                <th>Harga Tiket</th>
-                                <th>Info Tiket</th>
+                                <th>Harga Tiket Mulai</th>
+                                <th>Link Tiket</th>
                                 <th>Poster</th>
-                                <th>Trailer</th>
-                                <th>Aftermovie</th>
+                                <th>Video</th>
                                 <th>Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
@@ -68,22 +66,16 @@ if (!$queryTampilkanSemua) {
                                         <td><span class="badge bg-info text-dark"><?= $data['id_venue']; ?></span></td>
                                         <td><?= date('d M Y H:i', strtotime($data['tanggal_mulai'])); ?></td>
                                         <td><?= date('d M Y H:i', strtotime($data['tanggal_selesai'])); ?></td>
-                                        <td class="col-deskripsi" title="<?= htmlspecialchars($data['deskripsi']); ?>"><?= htmlspecialchars($data['deskripsi']); ?></td>
                                         <td>Rp <?= number_format($data['harga_tiket_mulai'], 0, ',', '.'); ?></td>
-                                        <td><?= htmlspecialchars($data['info_harga_tiket']); ?></td>
+                                        <td><a href="<?= $data['link_tiket']; ?>" style="color: white;"><?= $data['link_tiket']; ?></a></td>
 
                                         <td>
                                             <?php if(!empty($data['poster_konser'])): ?>
-                                                <a href="../../../../uploads/posterPict/<?= $data['poster_konser']; ?>" target="_blank" class="link-media text-info"><i class="bi bi-image"></i> Lihat</a>
+                                                <a href="../../../../<?= $data['poster_konser']; ?>" target="_blank" class="link-media text-info"><i class="bi bi-image"></i> Lihat</a>
                                             <?php else: ?> - <?php endif; ?>
                                         </td>
                                         <td>
-                                            <?php if(!empty($data['video_trailer'])): ?>
-                                                <a href="../../../../uploads/trailerPict/<?= $data['video_trailer']; ?>" target="_blank" class="link-media text-danger"><i class="bi bi-youtube"></i> Play</a>
-                                            <?php else: ?> - <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if(!empty($data['video_aftermovie'])): ?>
+                                            <?php if(!empty($data['video'])): ?>
                                                 <a href="../../../../uploads/aftermoviePict/<?= $data['video_aftermovie']; ?>" target="_blank" class="link-media text-warning"><i class="bi bi-film"></i> Play</a>
                                             <?php else: ?> - <?php endif; ?>
                                         </td>
