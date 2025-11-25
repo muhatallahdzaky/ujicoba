@@ -20,15 +20,16 @@ if (isset($_POST['simpan'])) {
     $nama   = mysqli_real_escape_string($koneksi, $_POST['nama_artis']);
     $genre  = mysqli_real_escape_string($koneksi, $_POST['genre']);
     $negara = mysqli_real_escape_string($koneksi, $_POST['asal_negara']);
+    $playlist = mysqli_real_escape_string($koneksi, $_POST['spotify_playlist_url']);
     $tipe   = $_POST['tipe_entitas'];
 
     // 3. SETUP PATH UPLOAD (Sesuai script editArtis.php lu)
     $baseDir = dirname(__DIR__, 4) . "/uploads/";
     $dirPict  = $baseDir . "artisPict/";
-    $dirAudio = $baseDir . "artisAudio/";
 
     // Fungsi Upload Sederhana
-    function uploadFile($inputName, $folder, $exts) {
+    function uploadFile($inputName, $folder, $exts)
+    {
         if (!empty($_FILES[$inputName]['name'])) {
             $name = $_FILES[$inputName]['name'];
             $tmp  = $_FILES[$inputName]['tmp_name'];
@@ -45,12 +46,11 @@ if (isset($_POST['simpan'])) {
     }
 
     // Proses Upload
-    $fotoFix  = uploadFile('gambar_artis', $dirPict, ['jpg','png','webp','jpeg']);
-    $audioFix = uploadFile('audio_sample', $dirAudio, ['mp3','wav','ogg']);
+    $fotoFix  = uploadFile('gambar_artis', $dirPict, ['jpg', 'png', 'webp', 'jpeg']);
 
     // 4. INSERT DATABASE
-    $query = "INSERT INTO artis (id_artis, nama_artis, genre, asal_negara, tipe_entitas, gambar_artis, audio_sample)
-              VALUES ('$idArtisBaru', '$nama', '$genre', '$negara', '$tipe', '$fotoFix', '$audioFix')";
+    $query = "INSERT INTO artis (id_artis, nama_artis, genre, asal_negara, tipe_entitas, gambar_artis, spotify_playlist_url)
+              VALUES ('$idArtisBaru', '$nama', '$genre', '$negara', '$tipe', '$fotoFix', '$playlist')";
 
     if ($koneksi->query($query)) {
         // Log
@@ -66,16 +66,35 @@ if (isset($_POST['simpan'])) {
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Tambah Artis</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/styles.css">
     <style>
-        .form-control, .form-select { background-color: #2c3e50; color: white; border: 1px solid #4a5f7f; }
-        .form-control:focus { background-color: #34495e; color: white; border-color: #3498db; }
-        label { color: #bdc3c7; margin-bottom: 5px; }
-        input[type=file] { background-color: #2c3e50; color: #bdc3c7; }
+        .form-control,
+        .form-select {
+            background-color: #2c3e50;
+            color: white;
+            border: 1px solid #4a5f7f;
+        }
+
+        .form-control:focus {
+            background-color: #34495e;
+            color: white;
+            border-color: #3498db;
+        }
+
+        label {
+            color: #bdc3c7;
+            margin-bottom: 5px;
+        }
+
+        input[type=file] {
+            background-color: #2c3e50;
+            color: #bdc3c7;
+        }
     </style>
 </head>
 
@@ -125,9 +144,9 @@ if (isset($_POST['simpan'])) {
                                 <input type="file" class="form-control" name="gambar_artis" accept=".jpg,.png,.jpeg,.webp">
                             </div>
 
-                            <div class="col-12">
-                                <label>Audio Sample</label>
-                                <input type="file" class="form-control" name="audio_sample" accept=".mp3,.wav,.ogg">
+                            <div class="col-md-6">
+                                <label>Playlist Spotify</label>
+                                <input type="text" class="form-control" name="spotify_playlist_url">
                             </div>
 
                             <div class="col-12 text-end mt-4">
@@ -142,4 +161,5 @@ if (isset($_POST['simpan'])) {
     <?php include '../footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

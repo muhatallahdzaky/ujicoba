@@ -35,7 +35,8 @@ if (isset($_POST['update'])) {
     // echo "Target Upload: " . $dirPict; die();
 
     // Fungsi Upload Aman
-    function uploadFile($inputName, $targetDir, $oldFile, $allowExt) {
+    function uploadFile($inputName, $targetDir, $oldFile, $allowExt)
+    {
         // Pastikan folder tujuan ada
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0777, true);
@@ -76,11 +77,11 @@ if (isset($_POST['update'])) {
     $nama   = mysqli_real_escape_string($koneksi, $_POST['nama_artis']);
     $genre  = mysqli_real_escape_string($koneksi, $_POST['genre']);
     $negara = mysqli_real_escape_string($koneksi, $_POST['asal_negara']);
+    $playlist = mysqli_real_escape_string($koneksi, $_POST['spotify_playlist_url']);
     $tipe   = $_POST['tipe_entitas'];
 
     // Eksekusi Upload
-    $foto_fix  = uploadFile('gambar_artis', $dirPict, $data['gambar_artis'], ['jpg','png','webp','jpeg']);
-    $audio_fix = uploadFile('audio_sample', $dirAudio, $data['audio_sample'], ['mp3','wav','ogg']);
+    $foto_fix  = uploadFile('gambar_artis', $dirPict, $data['gambar_artis'], ['jpg', 'png', 'webp', 'jpeg']);
 
     // Cek jika ada error upload
     if ($foto_fix == "GAGAL_MOVE") {
@@ -90,7 +91,7 @@ if (isset($_POST['update'])) {
     // Update Database
     $q = "UPDATE artis SET
           nama_artis='$nama', genre='$genre', asal_negara='$negara', tipe_entitas='$tipe',
-          gambar_artis='$foto_fix', audio_sample='$audio_fix'
+          gambar_artis='$foto_fix', spotify_playlist_url='$playlist'
           WHERE id_artis='$id'";
 
     if (mysqli_query($koneksi, $q)) {
@@ -106,19 +107,46 @@ if (isset($_POST['update'])) {
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Edit Artis</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/styles.css">
     <style>
-        .form-control, .form-select { background-color: #2c3e50; color: white; border: 1px solid #4a5f7f; }
-        .form-control:focus { background-color: #34495e; color: white; border-color: #3498db; }
-        label { color: #bdc3c7; margin-bottom: 5px; }
-        .preview { width: 100px; border-radius: 5px; margin-top: 10px; border: 1px solid #555; display: block; }
-        input[type=file] { background-color: #2c3e50; color: #bdc3c7; }
+        .form-control,
+        .form-select {
+            background-color: #2c3e50;
+            color: white;
+            border: 1px solid #4a5f7f;
+        }
+
+        .form-control:focus {
+            background-color: #34495e;
+            color: white;
+            border-color: #3498db;
+        }
+
+        label {
+            color: #bdc3c7;
+            margin-bottom: 5px;
+        }
+
+        .preview {
+            width: 100px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #555;
+            display: block;
+        }
+
+        input[type=file] {
+            background-color: #2c3e50;
+            color: #bdc3c7;
+        }
     </style>
 </head>
+
 <body>
     <?php include '../header.php'; ?>
     <div class="d-flex-wrapper">
@@ -159,19 +187,27 @@ if (isset($_POST['update'])) {
                             <div class="col-md-6">
                                 <label>Ganti Foto</label>
                                 <input type="file" class="form-control" name="gambar_artis" accept=".jpg,.png,.jpeg,.webp">
-                                <?php if($data['gambar_artis']): ?>
-                                    <img src="../../../../uploads/artisPict/<?= $data['gambar_artis']; ?>" class="preview">
+                                <?php if ($data['gambar_artis']): ?>
+                                    <img src="/WebKonserProjek/<?= $data['gambar_artis']; ?>" class="preview">
                                     <small class="text-muted">Foto saat ini</small>
                                 <?php endif; ?>
                             </div>
 
                             <div class="col-12">
-                                <label>Ganti Audio</label>
-                                <input type="file" class="form-control" name="audio_sample" accept=".mp3,.wav,.ogg">
-                                <?php if($data['audio_sample']): ?>
+                                <label>Ganti Playlist Spotify</label>
+                                <input type="text" class="form-control" name="spotify_playlist_url" value="<?= htmlspecialchars($data['spotify_playlist_url']); ?>" required>
+                                <?php if ($data['spotify_playlist_url']): ?>
                                     <div class="mt-2">
-                                        <audio controls src="../../../../uploads/artisAudio/<?= $data['audio_sample']; ?>" style="height: 30px;"></audio>
-                                        <br><small class="text-muted">Audio saat ini: <?= $data['audio_sample']; ?></small>
+                                        <iframe
+                                            style="border-radius:12px"
+                                            src="<?= htmlspecialchars($data['spotify_playlist_url']) ?>"
+                                            width="100%"
+                                            height="380"
+                                            frameborder="0"
+                                            allowfullscreen
+                                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                            loading="lazy">
+                                        </iframe>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -188,4 +224,5 @@ if (isset($_POST['update'])) {
     <?php include '../footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

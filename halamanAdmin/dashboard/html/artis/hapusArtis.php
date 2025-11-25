@@ -12,12 +12,10 @@ if (isset($_GET['id'])) {
     if ($data) {
         $namaDihapus = $data['nama_artis'];
         $fileGambar  = $data['gambar_artis'];
-        $fileAudio   = $data['audio_sample'];
 
         // PATH FISIK FILE (Sesuai editArtis.php)
         $baseDir = dirname(__DIR__, 4) . "/uploads/";
         $pathGambar = $baseDir . "artisPict/" . $fileGambar;
-        $pathAudio  = $baseDir . "artisAudio/" . $fileAudio;
 
         // 2. Hapus Data dari Database
         $hapus = mysqli_query($koneksi, "DELETE FROM artis WHERE id_artis = '$id'");
@@ -26,9 +24,6 @@ if (isset($_GET['id'])) {
             // 3. Hapus File Fisik Jika Ada
             if (!empty($fileGambar) && file_exists($pathGambar)) {
                 unlink($pathGambar);
-            }
-            if (!empty($fileAudio) && file_exists($pathAudio)) {
-                unlink($pathAudio);
             }
 
             // 4. Log
