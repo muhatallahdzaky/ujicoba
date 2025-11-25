@@ -1,0 +1,102 @@
+<?php
+session_start();
+include '../koneksi.php';
+
+$id = mysqli_real_escape_string($koneksi, $_GET['id']);
+$data = $koneksi->query("SELECT * FROM lineup WHERE id_lineup='$id'")->fetch_assoc();
+if(!$data) die("Data tidak ditemukan");
+
+// Data Dropdown
+$dataKonser = $koneksi->query("SELECT id_konser, nama_konser FROM konser ORDER BY nama_konser ASC");
+$dataArtis  = $koneksi->query("SELECT id_artis, nama_artis FROM artis ORDER BY nama_artis ASC");
+
+if (isset($_POST['update'])) {
+    $konser = $_POST['id_konser'];
+    $artis  = $_POST['id_artis'];
+    $jadwal = !empty($_POST['jadwal_tampil']) ? $_POST['jadwal_tampil'] : "NULL";
+
+    $q = "UPDATE lineup SET
+          id_konser='$konser',
+          id_artis='$artis',
+          jadwal_tampil='$jadwal'
+          WHERE id_lineup='$id'";
+
+    if ($koneksi->query($q)) {
+        $admin = $_SESSION['nama_admin'] ?? 'Admin';
+        $koneksi->query("INSERT INTO log_aktivitas (admin_nama, aksi, deskripsi) VALUES ('$admin', 'EDIT LINEUP', 'Edit LineUp ID: $id')");
+
+        echo "<script>alert('Update Berhasil!'); window.location='manajemenLineUp.php';</script>";
+    } else {
+        echo "<script>alert('Gagal Update: " . $koneksi->error . "');</script>";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit LineUp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .form-control, .form-select { background-color: #2c3e50; color: white; border: 1px solid #4a5f7f; }
+        .form-control:focus, .form-select:focus { background-color: #34495e; color: white; border-color: #3498db; }
+        label { color: #bdc3c7; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <?php include '../header.php'; ?>
+    <div class="d-flex-wrapper">
+        <?php include '../sideBar.php'; ?>
+
+        <div class="main-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold text-white">Edit LineUp</h4>
+                <a href="manajemenLineUp.php" class="btn btn-secondary btn-sm">Kembali</a>
+            </div>
+
+            <div class="card stats-card border-0">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label>Konser</label>
+                                <select name="id_konser" class="form-select" required>
+                                    <?php while($k = $dataKonser->fetch_assoc()) { ?>
+                                        <option value="<?= $k['id_konser']; ?>" <?= ($data['id_konser'] == $k['id_konser']) ? 'selected' : ''; ?>>
+                                            <?= $k['nama_konser']; ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Artis</label>
+                                <select name="id_artis" class="form-select" required>
+                                    <?php while($a = $dataArtis->fetch_assoc()) { ?>
+                                        <option value="<?= $a['id_artis']; ?>" <?= ($data['id_artis'] == $a['id_artis']) ? 'selected' : ''; ?>>
+                                            <?= $a['nama_artis']; ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label>Jadwal Tampil</label>
+                                <input type="datetime-local" name="jadwal_tampil" class="form-control" value="<?= $data['jadwal_tampil']; ?>" required>
+                            </div>
+
+                            <div class="col-12 text-end mt-4">
+                                <button type="submit" name="update" class="btn btn-primary px-4">Simpan Perubahan</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php include '../footer.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

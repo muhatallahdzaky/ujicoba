@@ -1,0 +1,165 @@
+/* GLOBAL VARIABLES */
+:root {
+  --bg-dark: #2c3e50;
+  --bg-card: #34495e;
+  --text-light: #ecf0f1;
+  --active-blue: #3498db;
+}
+
+/* RESET BODY & HTML */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* PAKSA DARK MODE (OVERRIDE BOOTSTRAP) */
+body {
+  background-color: var(--bg-dark) !important;
+  color: var(--text-light) !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* HAPUS BACKGROUND PUTIH DI ELEMENT LAIN */
+.bg-light,
+.bg-white {
+  background-color: var(--bg-dark) !important;
+  color: var(--text-light) !important;
+}
+
+/* HEADER NAVBAR */
+.navbar {
+  background-color: #3b4d61 !important;
+  z-index: 1000;
+}
+
+/* --- LAYOUT WRAPPER (PENTING BUAT KIRI-KANAN) --- */
+.d-flex-wrapper {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  overflow: hidden; /* Biar gak ada scroll ganda */
+}
+
+/* SIDEBAR */
+.sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  background-color: var(--bg-dark);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+}
+
+.sidebar .nav-link {
+  color: #bdc3c7;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.sidebar .nav-link:hover {
+  background-color: rgba(52, 152, 219, 0.2);
+  color: var(--active-blue);
+}
+
+.sidebar .nav-link.active {
+  background-color: var(--active-blue);
+  color: white;
+}
+
+/* MAIN CONTENT */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  background-color: var(--bg-dark) !important;
+  overflow-y: auto;
+  width: 100%;
+}
+
+/* CARDS */
+.stats-card,
+.table-card,
+.activity-card {
+  background-color: var(--bg-card);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  border: none;
+  color: white;
+}
+
+/* TABEL FIX */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: white;
+  color: white !important;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+.table thead th {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--active-blue);
+}
+.table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  color: white;
+}
+.table-hover tbody tr:hover td {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* FOOTER */
+footer {
+  background-color: var(--bg-dark);
+  text-align: center;
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+  color: #bdc3c7;
+}
+
+/* --- PAKSA HEADER & WRAPPER NEMPEL --- */
+
+/* Reset margin navbar biar gak ada jarak ke bawah */
+.navbar {
+  margin-bottom: 0 !important;
+  border: none !important;
+}
+
+/* Reset margin wrapper biar gak ada jarak ke atas */
+.d-flex-wrapper {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Pastikan sidebar tinggi full dan nempel atas */
+.sidebar {
+  margin-top: 0 !important;
+  height: calc(100vh - 56px); /* Sesuaikan tinggi navbar kalau perlu */
+}
+
+/* agar table jadi lebih bagus*/
+.full-layout {
+  flex: 1;          /* INI KUNCINYA: Ambil semua sisa ruang kosong */
+  width: 100%;
+  padding: 30px;
+  /* min-height: 80vh;  <-- HAPUS BARIS INI, GAK GUNA */
+}
+
+.table-title {
+  color: white;
+  font-weight: bold;
+}
+
+
