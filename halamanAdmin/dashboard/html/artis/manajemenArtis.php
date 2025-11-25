@@ -61,7 +61,7 @@ if (!$queryArtis) {
                                 <th>Genre</th>
                                 <th>Negara</th>
                                 <th>Tipe</th>
-                                <th>Audio Sample</th>
+                                <th>Spotify Artist Playlist</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -73,7 +73,7 @@ if (!$queryArtis) {
 
                                         <td>
                                             <?php if(!empty($data['gambar_artis'])): ?>
-                                                <img src="../../../../uploads/artisPict/<?= $data['gambar_artis']; ?>" class="img-artis">
+                                                <img src="/WebKonserProjek/<?= $data['gambar_artis']; ?>" class="img-artis">
                                             <?php else: ?>
                                                 <div class="img-artis d-flex align-items-center justify-content-center bg-secondary text-white" style="font-size: 10px;">No Pic</div>
                                             <?php endif; ?>
@@ -83,13 +83,8 @@ if (!$queryArtis) {
                                         <td><?= htmlspecialchars($data['genre']); ?></td>
                                         <td><?= htmlspecialchars($data['asal_negara']); ?></td>
                                         <td><span class="badge bg-info text-dark"><?= $data['tipe_entitas']; ?></span></td>
-
                                         <td>
-                                            <?php if(!empty($data['audio_sample'])): ?>
-                                                <audio controls class="audio-player">
-                                                    <source src="../../../../uploads/artisAudio/<?= $data['audio_sample']; ?>" type="audio/mpeg">
-                                                </audio>
-                                            <?php else: ?> <span class="text-muted small">-</span> <?php endif; ?>
+                                            <a href="<?= $data['spotify_playlist_url']; ?>" style="color: white;"><?= $data['spotify_playlist_url']; ?></a>
                                         </td>
 
                                         <td class="text-center">

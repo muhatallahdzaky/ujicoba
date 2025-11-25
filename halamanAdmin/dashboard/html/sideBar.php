@@ -18,7 +18,7 @@ function isActive($searchString) {
     <ul class="nav flex-column">
 
         <li class="nav-item">
-            <a class="nav-link <?php echo ($current_page == 'indexDashboard.php') ? 'active' : ''; ?>" href="<?php echo $path; ?>indexDashboard.php">
+            <a class="nav-link <?php echo ($current_page == 'indexDashboard.php') ? 'active' : ''; ?>" href="<?php echo $path; ?>folderDH/indexDashboard.php">
                 <i class="bi bi-speedometer2 me-2"></i>
                 Dashboard
             </a>

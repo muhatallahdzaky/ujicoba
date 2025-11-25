@@ -104,7 +104,7 @@ $queryAktivitasAtmin = @$koneksi->query("SELECT * FROM log_aktivitas ORDER BY id
                 </div>
             <?php }
             } else {
-              echo "<span class='text-muted small'>Belum ada aktivitas.</span>";
+              echo "<span>Belum ada aktivitas.</span>";
             } ?>
           </div>
         </div>
