@@ -1,26 +1,26 @@
 <?php
 session_start();
-include __DIR__ . '/../config/database.php';
+include 'koneksi.php';
 
 // --- LOGIC ---
 $jumlahKonserOtw = 0;
 $jumlahUserBulanIni = 0;
 
-$query = @$conn->query("SELECT COUNT(*) FROM konser WHERE tanggal_mulai > NOW()");
+$query = @$koneksi->query("SELECT COUNT(*) FROM konser WHERE tanggal_mulai > NOW()");
 if ($query) {
   $row = $query->fetch_row();
   $jumlahKonserOtw = $row[0];
 }
 
-$queryUser = @$conn->query("SELECT COUNT(*) FROM users WHERE MONTH(tanggal_daftar) = MONTH(NOW()) AND YEAR(tanggal_daftar) = YEAR(NOW())");
+$queryUser = @$koneksi->query("SELECT COUNT(*) FROM users WHERE MONTH(tanggal_daftar) = MONTH(NOW()) AND YEAR(tanggal_daftar) = YEAR(NOW())");
 if ($queryUser) {
   $rowUser = $queryUser->fetch_row();
   $jumlahUserBulanIni = $rowUser[0];
 }
 
-$queryKonser = @$conn->query("SELECT nama_konser, tanggal_mulai, tanggal_selesai FROM konser WHERE tanggal_mulai > NOW() ORDER BY tanggal_mulai ASC LIMIT 5");
+$queryKonser = @$koneksi->query("SELECT nama_konser, tanggal_mulai, tanggal_selesai FROM konser WHERE tanggal_mulai > NOW() ORDER BY tanggal_mulai ASC LIMIT 5");
 
-$queryAktivitasAtmin = @$conn->query("SELECT * FROM log_aktivitas ORDER BY id DESC LIMIT 8");
+$queryAktivitasAtmin = @$koneksi->query("SELECT * FROM log_aktivitas ORDER BY id DESC LIMIT 8");
 ?>
 
 <!DOCTYPE html>
@@ -33,12 +33,14 @@ $queryAktivitasAtmin = @$conn->query("SELECT * FROM log_aktivitas ORDER BY id DE
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="css/styles.css?v=<?php echo time(); ?>">
+
+  <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
 
-  <?php include 'includes/headerAdmin.php'; ?>
+  <?php include 'header.php'; ?>
+
   <div class="d-flex-wrapper"><?php include 'sideBar.php'; ?>
 
     <div class="main-content">
@@ -102,7 +104,7 @@ $queryAktivitasAtmin = @$conn->query("SELECT * FROM log_aktivitas ORDER BY id DE
                 </div>
             <?php }
             } else {
-              echo "<span>Belum ada aktivitas.</span>";
+              echo "<span class='text-muted small'>Belum ada aktivitas.</span>";
             } ?>
           </div>
         </div>
@@ -110,7 +112,8 @@ $queryAktivitasAtmin = @$conn->query("SELECT * FROM log_aktivitas ORDER BY id DE
     </div>
   </div>
 
-  <?php include 'includes/footerAdmin.php'; ?>
+  <?php include 'footer.php'; ?>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

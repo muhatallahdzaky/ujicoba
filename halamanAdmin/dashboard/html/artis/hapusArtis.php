@@ -1,13 +1,12 @@
 <?php
 session_start();
-include __DIR__ . '/../../../../config/database.php';
-
+include '../koneksi.php';
 
 if (isset($_GET['id'])) {
-    $id = mysqli_real_escape_string($conni, $_GET['id']);
+    $id = mysqli_real_escape_string($koneksi, $_GET['id']);
 
     // 1. Ambil Data Dulu (Buat hapus file fisiknya)
-    $queryCek = mysqli_query($conni, "SELECT * FROM artis WHERE id_artis = '$id'");
+    $queryCek = mysqli_query($koneksi, "SELECT * FROM artis WHERE id_artis = '$id'");
     $data = mysqli_fetch_assoc($queryCek);
 
     if ($data) {
@@ -21,7 +20,7 @@ if (isset($_GET['id'])) {
         $pathAudio  = $baseDir . "artisAudio/" . $fileAudio;
 
         // 2. Hapus Data dari Database
-        $hapus = mysqli_query($conni, "DELETE FROM artis WHERE id_artis = '$id'");
+        $hapus = mysqli_query($koneksi, "DELETE FROM artis WHERE id_artis = '$id'");
 
         if ($hapus) {
             // 3. Hapus File Fisik Jika Ada
@@ -34,7 +33,7 @@ if (isset($_GET['id'])) {
 
             // 4. Log
             $admin = $_SESSION['nama_admin'] ?? 'Admin';
-            mysqli_query($conni, "INSERT INTO log_aktivitas (admin_nama, aksi, deskripsi) VALUES ('$admin', 'HAPUS ARTIS', 'Menghapus Artis: $namaDihapus')");
+            mysqli_query($koneksi, "INSERT INTO log_aktivitas (admin_nama, aksi, deskripsi) VALUES ('$admin', 'HAPUS ARTIS', 'Menghapus Artis: $namaDihapus')");
 
             echo "<script>alert('Artis Berhasil Dihapus!'); window.location='manajemenArtis.php';</script>";
         } else {

@@ -4,16 +4,16 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include __DIR__ . '/../../../../config/database.php';
+include '../koneksi.php';
 
 if (!isset($_GET['id'])) {
     // Jangan redirect, matiin aja biar gak looping
     die("Error: ID tidak ditemukan di URL. Silakan kembali ke halaman manajemen.");
 }
-$id = mysqli_real_escape_string($conn, $_GET['id']);
+$id = mysqli_real_escape_string($koneksi, $_GET['id']);
 
 // Ambil data lama
-$query = mysqli_query($conn, "SELECT * FROM artis WHERE id_artis = '$id'");
+$query = mysqli_query($koneksi, "SELECT * FROM artis WHERE id_artis = '$id'");
 $data  = mysqli_fetch_assoc($query);
 if (!$data) die("Data artis tidak ditemukan!");
 
@@ -29,6 +29,7 @@ if (isset($_POST['update'])) {
 
     // Gabungkan jadi alamat lengkap
     $dirPict  = $rootProject . "/uploads/artisPict/";
+    $dirAudio = $rootProject . "/uploads/artisAudio/";
 
     // DEBUG: Coba lihat ini kalau masih gagal, path-nya bener gak?
     // echo "Target Upload: " . $dirPict; die();
@@ -72,13 +73,14 @@ if (isset($_POST['update'])) {
         return $oldFile; // Pakai file lama
     }
 
-    $nama   = mysqli_real_escape_string($conn, $_POST['nama_artis']);
-    $genre  = mysqli_real_escape_string($conn, $_POST['genre']);
-    $negara = mysqli_real_escape_string($conn, $_POST['asal_negara']);
+    $nama   = mysqli_real_escape_string($koneksi, $_POST['nama_artis']);
+    $genre  = mysqli_real_escape_string($koneksi, $_POST['genre']);
+    $negara = mysqli_real_escape_string($koneksi, $_POST['asal_negara']);
     $tipe   = $_POST['tipe_entitas'];
 
     // Eksekusi Upload
     $foto_fix  = uploadFile('gambar_artis', $dirPict, $data['gambar_artis'], ['jpg','png','webp','jpeg']);
+    $audio_fix = uploadFile('audio_sample', $dirAudio, $data['audio_sample'], ['mp3','wav','ogg']);
 
     // Cek jika ada error upload
     if ($foto_fix == "GAGAL_MOVE") {
@@ -88,15 +90,16 @@ if (isset($_POST['update'])) {
     // Update Database
     $q = "UPDATE artis SET
           nama_artis='$nama', genre='$genre', asal_negara='$negara', tipe_entitas='$tipe',
-          gambar_artis='$foto_fix' WHERE id_artis='$id'";
+          gambar_artis='$foto_fix', audio_sample='$audio_fix'
+          WHERE id_artis='$id'";
 
-    if (mysqli_query($conn, $q)) {
+    if (mysqli_query($koneksi, $q)) {
         $admin = $_SESSION['nama_admin'] ?? 'Admin';
-        mysqli_query($conn, "INSERT INTO log_aktivitas (admin_nama, aksi, deskripsi) VALUES ('$admin', 'EDIT ARTIS', 'Edit Artis: $nama ($id)')");
+        mysqli_query($koneksi, "INSERT INTO log_aktivitas (admin_nama, aksi, deskripsi) VALUES ('$admin', 'EDIT ARTIS', 'Edit Artis: $nama ($id)')");
 
         echo "<script>alert('Update Berhasil!'); window.location='manajemenArtis.php';</script>";
     } else {
-        echo "<script>alert('Gagal Update Database: " . mysqli_error($conn) . "');</script>";
+        echo "<script>alert('Gagal Update Database: " . mysqli_error($koneksi) . "');</script>";
     }
 }
 ?>
@@ -159,6 +162,17 @@ if (isset($_POST['update'])) {
                                 <?php if($data['gambar_artis']): ?>
                                     <img src="../../../../uploads/artisPict/<?= $data['gambar_artis']; ?>" class="preview">
                                     <small class="text-muted">Foto saat ini</small>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="col-12">
+                                <label>Ganti Audio</label>
+                                <input type="file" class="form-control" name="audio_sample" accept=".mp3,.wav,.ogg">
+                                <?php if($data['audio_sample']): ?>
+                                    <div class="mt-2">
+                                        <audio controls src="../../../../uploads/artisAudio/<?= $data['audio_sample']; ?>" style="height: 30px;"></audio>
+                                        <br><small class="text-muted">Audio saat ini: <?= $data['audio_sample']; ?></small>
+                                    </div>
                                 <?php endif; ?>
                             </div>
 

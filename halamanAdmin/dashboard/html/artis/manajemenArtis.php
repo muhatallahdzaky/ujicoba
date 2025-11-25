@@ -1,18 +1,17 @@
 <?php
 session_start();
-include __DIR__ . '/../../../../config/database.php';
+include '../koneksi.php'; // Mundur 1 langkah ke html/
 
 // Query Data Artis
-$queryArtis = $conn->query("SELECT * FROM artis ORDER BY id_artis ASC");
+$queryArtis = $koneksi->query("SELECT * FROM artis ORDER BY id_artis ASC");
 
 if (!$queryArtis) {
-    die("Gagal Query: " . $conn->error);
+    die("Gagal Query: " . $koneksi->error);
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,31 +22,19 @@ if (!$queryArtis) {
     <link rel="stylesheet" href="../../css/styles.css?v=<?php echo time(); ?>">
 
     <style>
-        .table-responsive {
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-            padding: 12px 15px;
-        }
+        .table-responsive { overflow-x: auto; white-space: nowrap; }
+        .table th, .table td { vertical-align: middle; padding: 12px 15px; }
 
         /* Foto Artis Bulat & Keren */
         .img-artis {
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             object-fit: cover;
             border-radius: 50%;
             border: 2px solid #3498db;
         }
 
         /* Audio Player Minimalis */
-        .audio-player {
-            width: 200px;
-            height: 30px;
-        }
+        .audio-player { width: 200px; height: 30px; }
     </style>
 </head>
 
@@ -74,7 +61,7 @@ if (!$queryArtis) {
                                 <th>Genre</th>
                                 <th>Negara</th>
                                 <th>Tipe</th>
-                                <th>Playlist</th>
+                                <th>Audio Sample</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -85,8 +72,8 @@ if (!$queryArtis) {
                                         <td><span class="badge bg-secondary"><?= $data['id_artis']; ?></span></td>
 
                                         <td>
-                                            <?php if (!empty($data['gambar_artis'])): ?>
-                                                <img src="<?= BASE_URL . 'assets/uploads/band_pict/' . htmlspecialchars($data['gambar_artis']) ?>" class="img-artis">
+                                            <?php if(!empty($data['gambar_artis'])): ?>
+                                                <img src="../../../../uploads/artisPict/<?= $data['gambar_artis']; ?>" class="img-artis">
                                             <?php else: ?>
                                                 <div class="img-artis d-flex align-items-center justify-content-center bg-secondary text-white" style="font-size: 10px;">No Pic</div>
                                             <?php endif; ?>
@@ -96,7 +83,14 @@ if (!$queryArtis) {
                                         <td><?= htmlspecialchars($data['genre']); ?></td>
                                         <td><?= htmlspecialchars($data['asal_negara']); ?></td>
                                         <td><span class="badge bg-info text-dark"><?= $data['tipe_entitas']; ?></span></td>
-                                        <td><?= htmlspecialchars($data['spotify_playlist_url']); ?></td>
+
+                                        <td>
+                                            <?php if(!empty($data['audio_sample'])): ?>
+                                                <audio controls class="audio-player">
+                                                    <source src="../../../../uploads/artisAudio/<?= $data['audio_sample']; ?>" type="audio/mpeg">
+                                                </audio>
+                                            <?php else: ?> <span class="text-muted small">-</span> <?php endif; ?>
+                                        </td>
 
                                         <td class="text-center">
                                             <div class="d-flex gap-2 justify-content-center">
@@ -109,11 +103,8 @@ if (!$queryArtis) {
                                             </div>
                                         </td>
                                     </tr>
-                                <?php }
-                            } else { ?>
-                                <tr>
-                                    <td colspan="8" class="text-center py-5 text-muted">Belum ada data artis.</td>
-                                </tr>
+                            <?php } } else { ?>
+                                <tr><td colspan="8" class="text-center py-5 text-muted">Belum ada data artis.</td></tr>
                             <?php } ?>
                         </tbody>
                     </table>
@@ -125,5 +116,4 @@ if (!$queryArtis) {
     <?php include '../footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>>

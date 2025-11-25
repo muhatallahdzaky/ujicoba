@@ -1,8 +1,8 @@
 <?php
 session_start();
-include __DIR__ . '/../../../config/database.php';
+include '../koneksi.php'; // Asumsi koneksi satu folder
 
-$queryUsers = $conn->query("SELECT * FROM users ORDER BY id_user ASC");
+$queryUsers = $koneksi->query("SELECT * FROM users ORDER BY id_user ASC");
 ?>
 
 <!DOCTYPE html>
@@ -20,9 +20,9 @@ $queryUsers = $conn->query("SELECT * FROM users ORDER BY id_user ASC");
     </style>
 </head>
 <body>
-    <?php include '../../includes/headerAdmin.php';?>
+    <?php include '../header.php'; ?>
     <div class="d-flex-wrapper">
-        <?php include '../../sideBar.php'; ?>
+        <?php include '../sideBar.php'; ?>
 
         <div class="main-content">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -84,7 +84,8 @@ $queryUsers = $conn->query("SELECT * FROM users ORDER BY id_user ASC");
             </div>
         </div>
     </div>
-    <?php include '../../includes/footerAdmin.php';?>
+
+    <?php include '../footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
