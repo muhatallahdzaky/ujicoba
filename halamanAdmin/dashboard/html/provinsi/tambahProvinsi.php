@@ -3,16 +3,20 @@ session_start();
 include '../koneksi.php';
 
 if (isset($_POST['simpan'])) {
-    // ID Otomatis
-    $cekId = $koneksi->query("SELECT max(id_provinsi) as maxID FROM provinsi");
-    $dataId = $cekId->fetch_assoc();
+    $queryAll = $koneksi->query("SELECT id_provinsi FROM provinsi");
+    $angkaTerpakai = [];
 
-    $noUrut = 1;
-    if ($dataId['maxID']) {
-        $noUrut = (int)substr($dataId['maxID'], 1) + 1;
+    while ($row = $queryAll->fetch_assoc()) {
+        $angkaTerpakai[] = (int) substr($row['id_provinsi'], 1);
     }
-    $idBaru = "P" . sprintf("%02s", $noUrut);
 
+    if (empty($angkaTerpakai)) {
+        $nextNumber = 1;
+    } else {
+        $nextNumber = max($angkaTerpakai) + 1;
+    }
+
+    $idBaru = "P" . sprintf("%03d", $nextNumber);
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama_provinsi']);
 
     if ($koneksi->query("INSERT INTO provinsi VALUES ('$idBaru', '$nama')")) {
@@ -26,16 +30,31 @@ if (isset($_POST['simpan'])) {
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <title>Tambah Provinsi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/styles.css">
     <style>
-        .form-control { background-color: #2c3e50; color: white; border: 1px solid #4a5f7f; }
-        .form-control:focus { background-color: #34495e; color: white; border-color: #3498db; }
-        label { color: #bdc3c7; margin-bottom: 5px; }
+        .form-control {
+            background-color: #2c3e50;
+            color: white;
+            border: 1px solid #4a5f7f;
+        }
+
+        .form-control:focus {
+            background-color: #34495e;
+            color: white;
+            border-color: #3498db;
+        }
+
+        label {
+            color: #bdc3c7;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
+
 <body>
     <?php include '../header.php'; ?>
     <div class="d-flex-wrapper">
@@ -67,4 +86,5 @@ if (isset($_POST['simpan'])) {
     <?php include '../footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

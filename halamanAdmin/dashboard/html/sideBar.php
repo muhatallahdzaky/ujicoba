@@ -83,9 +83,9 @@ function isActive($searchString)
         </li>
 
         <li class="nav-item mt-3 border-top border-secondary pt-2">
-            <a class="nav-link text-danger" href="<?php echo $path; ?>logout.php">
+            <a class="nav-link text-danger" href="<?php echo $path; ?>../../../../../../WebKonserProjek/index.php">
                 <i class="bi bi-box-arrow-right me-2"></i>
-                Logout
+                Kembali Ke Halaman Awal
             </a>
         </li>
 

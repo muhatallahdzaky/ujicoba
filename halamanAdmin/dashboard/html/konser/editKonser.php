@@ -2,90 +2,87 @@
 session_start();
 include '../koneksi.php';
 
-if (!isset($_GET['id'])) header("Location: manajemenKonser.php");
+if (!isset($_GET['id'])) {
+    die("Error: ID tidak ditemukan.");
+}
 $id = mysqli_real_escape_string($koneksi, $_GET['id']);
 
 $query = mysqli_query($koneksi, "SELECT * FROM konser WHERE id_konser = '$id'");
-$data  = mysqli_fetch_assoc($query);
+$data = mysqli_fetch_assoc($query);
 if (!$data) die("Data tidak ditemukan!");
 
 if (isset($_POST['update'])) {
-    $baseDir = dirname(__DIR__, 4) . "/uploads/";
-    $dirPoster   = $baseDir . "posterPict/";
-    $dirVideo    = $baseDir . "trailerPict/";
-    function cekUpload($inputName, $folder, $oldFile)
-    {
-        if (!empty($_FILES[$inputName]['name'])) {
-            $name = $_FILES[$inputName]['name'];
-            $tmp  = $_FILES[$inputName]['tmp_name'];
-            $ext  = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-            $new  = uniqid() . '.' . $ext;
-            if (move_uploaded_file($tmp, $folder . $new)) {
-                if (!empty($oldFile) && file_exists($folder . $oldFile)) unlink($folder . $oldFile);
-                return $new;
+    $rootProject = dirname(__DIR__, 4);
+
+    function processUpload($inputFile, $subFolder, $oldDbPath, $rootProject, $idKonser, $allowedExts) {
+        $targetDir = $rootProject . "/assets/uploads/" . $subFolder . "/";
+        $dbDir = "assets/uploads/" . $subFolder . "/";
+        $finalPath = $oldDbPath;
+
+        if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
+        if (!empty($_FILES[$inputFile]['name'])) {
+            $fileName = $_FILES[$inputFile]['name'];
+            $tmpName = $_FILES[$inputFile]['tmp_name'];
+            $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+            if (in_array($ext, $allowedExts)) {
+                $newFileName = $idKonser . '_' . $inputFile . '_' . uniqid() . '.' . $ext;
+                $uploadPath = $targetDir . $newFileName;
+
+                if (move_uploaded_file($tmpName, $uploadPath)) {
+                    $finalPath = $dbDir . $newFileName;
+
+                    $oldAbsolutePath = $rootProject . "/" . $oldDbPath;
+                    if (!empty($oldDbPath) && file_exists($oldAbsolutePath) && is_file($oldAbsolutePath)) {
+                        unlink($oldAbsolutePath);
+                    }
+                }
+            } else {
+                echo "<script>alert('Format file salah');</script>";
             }
         }
-        return $oldFile;
+        return $finalPath;
     }
 
-    $nama   = mysqli_real_escape_string($koneksi, $_POST['nama_konser']);
-    $status = ($_POST['tanggal_mulai'] > date('Y-m-d H:i:s')) ? 'upcoming' : 'completed';
+    $nama = mysqli_real_escape_string($koneksi, $_POST['nama_konser']);
+    $venue = mysqli_real_escape_string($koneksi, $_POST['id_venue']);
+    $mulai = $_POST['tanggal_mulai'];
+    $selesai = $_POST['tanggal_selesai'];
+    $harga = $_POST['harga_tiket'];
+    $link = mysqli_real_escape_string($koneksi, $_POST['link_tiket']);
+    $status = ($mulai > date('Y-m-d H:i:s')) ? 'upcoming' : 'completed';
 
-    $poster_fix     = cekUpload('poster', $dirPoster, $data['poster_konser']);
-    $video_fix    = cekUpload('video_trailer', $dirTrailer, $data['video']);
+    $poster_fix = processUpload('poster', 'posters', $data['poster_konser'], $rootProject, $id, ['jpg', 'jpeg', 'png', 'webp']);
+    $video_fix = processUpload('video_trailer', 'trailers', $data['video'], $rootProject, $id, ['mp4', 'webm', 'ogg']);
 
-    $q = "UPDATE konser SET nama_konser='$nama', id_venue='" . $_POST['id_venue'] . "', tanggal_mulai='" . $_POST['tanggal_mulai'] . "', tanggal_selesai='" . $_POST['tanggal_selesai'] . "', harga_tiket_mulai='" . $_POST['harga_tiket'] . "', link_tiket='" . $_POST['link_tiket'] . "', poster_konser='$poster_fix', video='$video_fix', status_konser='$status' WHERE id_konser='$id'";
+    $q = "UPDATE konser SET nama_konser='$nama', id_venue='$venue', tanggal_mulai='$mulai', tanggal_selesai='$selesai', harga_tiket_mulai='$harga', link_tiket='$link', poster_konser='$poster_fix', video='$video_fix', status_konser='$status' WHERE id_konser='$id'";
 
     if (mysqli_query($koneksi, $q)) {
         $admin = $_SESSION['nama_admin'] ?? 'Admin';
         mysqli_query($koneksi, "INSERT INTO log_aktivitas (admin_nama, aksi, deskripsi) VALUES ('$admin', 'EDIT KONSER', 'Edit Konser: $nama')");
         echo "<script>alert('Update Berhasil!'); window.location='manajemenKonser.php';</script>";
     } else {
-        echo "<script>alert('Gagal Update!');</script>";
+        echo "<script>alert('Gagal Update: " . mysqli_error($koneksi) . "');</script>";
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <title>Edit Konser</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/styles.css">
     <style>
-        .form-control,
-        .form-select {
-            background-color: #2c3e50;
-            color: white;
-            border: 1px solid #4a5f7f;
-        }
-
-        .form-control:focus {
-            background-color: #34495e;
-            color: white;
-            border-color: #3498db;
-        }
-
-        label {
-            color: #bdc3c7;
-            margin-bottom: 5px;
-        }
-
-        .img-preview {
-            width: 100px;
-            margin-top: 5px;
-            border: 1px solid #555;
-        }
-
-        input[type=file] {
-            background-color: #2c3e50;
-            color: #bdc3c7;
-        }
+        .form-control, .form-select { background-color: #2c3e50; color: white; border: 1px solid #4a5f7f; }
+        .form-control:focus { background-color: #34495e; color: white; border-color: #3498db; }
+        label { color: #bdc3c7; margin-bottom: 5px; }
+        .preview { border: 1px solid #555; margin-top: 5px; border-radius: 5px; object-fit: cover; }
+        input[type=file] { background-color: #2c3e50; color: #bdc3c7; }
     </style>
 </head>
-
 <body>
     <?php include '../header.php'; ?>
     <div class="d-flex-wrapper">
@@ -99,7 +96,10 @@ if (isset($_POST['update'])) {
                 <div class="card-body">
                     <form action="" method="POST" enctype="multipart/form-data">
                         <div class="row g-4">
-                            <div class="col-12"><label>Nama Konser</label><input type="text" class="form-control" name="nama_konser" value="<?= htmlspecialchars($data['nama_konser']) ?>" required></div>
+                            <div class="col-12">
+                                <label>Nama Konser</label>
+                                <input type="text" class="form-control" name="nama_konser" value="<?= htmlspecialchars($data['nama_konser']) ?>" required>
+                            </div>
                             <div class="col-12">
                                 <label>Lokasi Venue</label>
                                 <select class="form-select" name="id_venue" required>
@@ -113,18 +113,43 @@ if (isset($_POST['update'])) {
                                     ?>
                                 </select>
                             </div>
-                            <div class="col-md-6"><label>Mulai</label><input type="datetime-local" class="form-control" name="tanggal_mulai" value="<?= date('Y-m-d\TH:i', strtotime($data['tanggal_mulai'])) ?>" required></div>
-                            <div class="col-md-6"><label>Selesai</label><input type="datetime-local" class="form-control" name="tanggal_selesai" value="<?= date('Y-m-d\TH:i', strtotime($data['tanggal_selesai'])) ?>" required></div>
-                            <div class="col-md-6"><label>Harga</label><input type="number" class="form-control" name="harga_tiket" value="<?= $data['harga_tiket_mulai'] ?>" required></div>
-                            <div class="col-md-6"><label>Link Tiket</label><input type="text" class="form-control" name="link_tiket" value="<?= $data['link_tiket'] ?>" required></div>
-                            <div class="col-md-4"><label>Ganti Poster</label><input type="file" class="form-control" name="poster"><br>
+                            <div class="col-md-6">
+                                <label>Mulai</label>
+                                <input type="datetime-local" class="form-control" name="tanggal_mulai" value="<?= date('Y-m-d\TH:i', strtotime($data['tanggal_mulai'])) ?>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Selesai</label>
+                                <input type="datetime-local" class="form-control" name="tanggal_selesai" value="<?= date('Y-m-d\TH:i', strtotime($data['tanggal_selesai'])) ?>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Harga Tiket (Rp)</label>
+                                <input type="number" class="form-control" name="harga_tiket" value="<?= $data['harga_tiket_mulai'] ?>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Link Tiket</label>
+                                <input type="text" class="form-control" name="link_tiket" value="<?= $data['link_tiket'] ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Ganti Poster</label>
+                                <input type="file" class="form-control" name="poster" accept=".jpg,.jpeg,.png,.webp">
                                 <?php if ($data['poster_konser']): ?>
-                                    <img src="/WebKonserProjek/<?= $data['poster_konser']; ?>" class="preview" width="100%">
-                                    <small class="text-muted">Foto saat ini</small>
+                                    <img src="../../../../<?= $data['poster_konser']; ?>" class="preview" width="150">
+                                    <br><small class="text-muted">Poster saat ini</small>
                                 <?php endif; ?>
                             </div>
-                            <div class="col-md-4"><label>Ganti Video</label><input type="file" class="form-control" name="video_trailer"></div>
-                            <div class="col-12 text-end mt-4"><button type="submit" name="update" class="btn btn-primary px-4">Simpan Perubahan</button></div>
+                            <div class="col-md-6">
+                                <label>Ganti Video Trailer</label>
+                                <input type="file" class="form-control" name="video_trailer" accept=".mp4,.webm,.ogg">
+                                <?php if ($data['video']): ?>
+                                    <video width="200" controls class="preview">
+                                        <source src="../../../../<?= $data['video']; ?>" type="video/mp4">
+                                    </video>
+                                    <br><small class="text-muted">Video saat ini</small>
+                                <?php endif; ?>
+                            </div>
+                            <div class="col-12 text-end mt-4">
+                                <button type="submit" name="update" class="btn btn-primary px-4">Simpan Perubahan</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -134,5 +159,4 @@ if (isset($_POST['update'])) {
     <?php include '../footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

@@ -30,8 +30,10 @@ if (!$queryTampilkanSemua) {
 </head>
 
 <body>
-    <?php include '../header.php'; ?> <div class="d-flex-wrapper">
-        <?php include '../sideBar.php'; ?> <div class="main-content">
+    <?php include '../header.php'; ?>
+    <div class="d-flex-wrapper">
+        <?php include '../sideBar.php'; ?>
+        <div class="main-content">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-white"><i class="bi bi-music-note-list me-2"></i>Daftar Konser</h2>
                 <a href="tambahDataKonser.php" class="btn btn-success"><i class="bi bi-plus-lg me-2"></i> Tambah Konser</a>
@@ -74,9 +76,10 @@ if (!$queryTampilkanSemua) {
                                                 <a href="../../../../<?= $data['poster_konser']; ?>" target="_blank" class="link-media text-info"><i class="bi bi-image"></i> Lihat</a>
                                             <?php else: ?> - <?php endif; ?>
                                         </td>
+
                                         <td>
                                             <?php if(!empty($data['video'])): ?>
-                                                <a href="../../../../uploads/aftermoviePict/<?= $data['video_aftermovie']; ?>" target="_blank" class="link-media text-warning"><i class="bi bi-film"></i> Play</a>
+                                                <a href="../../../../<?= $data['video']; ?>" target="_blank" class="link-media text-warning"><i class="bi bi-film"></i> Play</a>
                                             <?php else: ?> - <?php endif; ?>
                                         </td>
 
@@ -84,12 +87,13 @@ if (!$queryTampilkanSemua) {
                                         <td>
                                             <div class="d-flex gap-2 justify-content-center">
                                                 <a href="editKonser.php?id=<?= $data['id_konser']; ?>" class="btn btn-sm btn-warning text-white" title="Edit"><i class="bi bi-pencil"></i></a>
+
                                                 <a href="hapusKonser.php?id=<?= $data['id_konser']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus <?= $data['nama_konser']; ?>?')" title="Hapus"><i class="bi bi-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
                             <?php } } else { ?>
-                                <tr><td colspan="13" class="text-center py-5 text-muted">Belum ada data konser.</td></tr>
+                                <tr><td colspan="11" class="text-center py-5 text-muted">Belum ada data konser.</td></tr>
                             <?php } ?>
                         </tbody>
                     </table>

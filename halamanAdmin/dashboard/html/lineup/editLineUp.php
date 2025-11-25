@@ -2,30 +2,48 @@
 session_start();
 include '../koneksi.php';
 
+// 1. Ambil ID dari URL dan amankan
+if (!isset($_GET['id'])) {
+    header("Location: manajemenLineUp.php");
+    exit();
+}
 $id = mysqli_real_escape_string($koneksi, $_GET['id']);
-$data = $koneksi->query("SELECT * FROM lineup WHERE id_lineup='$id'")->fetch_assoc();
-if(!$data) die("Data tidak ditemukan");
 
-// Data Dropdown
+// 2. Ambil Data Lama
+$data = $koneksi->query("SELECT * FROM lineup WHERE id_lineup='$id'")->fetch_assoc();
+if (!$data) die("Data tidak ditemukan");
+
+// 3. Data Dropdown
 $dataKonser = $koneksi->query("SELECT id_konser, nama_konser FROM konser ORDER BY nama_konser ASC");
 $dataArtis  = $koneksi->query("SELECT id_artis, nama_artis FROM artis ORDER BY nama_artis ASC");
 
+// 4. Proses Update
 if (isset($_POST['update'])) {
-    $konser = $_POST['id_konser'];
-    $artis  = $_POST['id_artis'];
+    $konser = mysqli_real_escape_string($koneksi, $_POST['id_konser']);
+    $artis  = mysqli_real_escape_string($koneksi, $_POST['id_artis']);
 
-    $q = "UPDATE lineup SET
-          id_konser='$konser',
-          id_artis='$artis',
-          WHERE id_lineup='$id'";
+    $cekDuplikat = $koneksi->query("SELECT id_lineup FROM lineup
+                                    WHERE id_konser = '$konser'
+                                    AND id_artis = '$artis'
+                                    AND id_lineup != '$id'");
 
-    if ($koneksi->query($q)) {
-        $admin = $_SESSION['nama_admin'] ?? 'Admin';
-        $koneksi->query("INSERT INTO log_aktivitas (admin_nama, aksi, deskripsi) VALUES ('$admin', 'EDIT LINEUP', 'Edit LineUp ID: $id')");
-
-        echo "<script>alert('Update Berhasil!'); window.location='manajemenLineUp.php';</script>";
+    if ($cekDuplikat->num_rows > 0) {
+        echo "<script>alert('GAGAL: Artis ini sudah ada di lineup konser tersebut!');</script>";
     } else {
-        echo "<script>alert('Gagal Update: " . $koneksi->error . "');</script>";
+        // UPDATE DATA (Perhatikan: Tidak ada koma sebelum WHERE)
+        $q = "UPDATE lineup SET
+              id_konser = '$konser',
+              id_artis  = '$artis'
+              WHERE id_lineup = '$id'";
+
+        if ($koneksi->query($q)) {
+            $admin = $_SESSION['nama_admin'] ?? 'Admin';
+            $koneksi->query("INSERT INTO log_aktivitas (admin_nama, aksi, deskripsi) VALUES ('$admin', 'EDIT LINEUP', 'Edit LineUp ID: $id')");
+
+            echo "<script>alert('Update Berhasil!'); window.location='manajemenLineUp.php';</script>";
+        } else {
+            echo "<script>alert('Gagal Update: " . $koneksi->error . "');</script>";
+        }
     }
 }
 ?>

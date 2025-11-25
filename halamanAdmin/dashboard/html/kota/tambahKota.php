@@ -7,16 +7,25 @@ $dataProvinsi = $koneksi->query("SELECT id_provinsi, nama_provinsi FROM provinsi
 
 if (isset($_POST['simpan'])) {
 
-    // 1. ID OTOMATIS (C01, C02, dst)
-    $cekId = $koneksi->query("SELECT max(id_kota) as maxID FROM kota");
-    $dataId = $cekId->fetch_assoc();
+    $queryAll = $koneksi->query("SELECT id_kota FROM kota");
+    $angkaTerpakai = [];
 
-    $noUrut = 1;
-    if ($dataId['maxID']) {
-        // Ambil angka setelah C (index 1)
-        $noUrut = (int)substr($dataId['maxID'], 1) + 1;
+    while ($row = $queryAll->fetch_assoc()) {
+        // Ambil angka setelah huruf "C"
+        $angkaTerpakai[] = (int) substr($row['id_kota'], 1);
     }
-    $idBaru = "C" . sprintf("%02s", $noUrut); // Format C01
+
+    if (empty($angkaTerpakai)) {
+        // Kalau tabel kosong, mulai dari 1
+        $nextNumber = 1;
+    } else {
+        // Cari angka paling besar, tambah 1
+        $nextNumber = max($angkaTerpakai) + 1;
+    }
+
+    // Format C + 3 Digit (C001, C015, C100)
+    // Pakai %03d biar formatnya 3 digit (001)
+    $idBaru = "C" . sprintf("%03d", $nextNumber);
 
     // 2. TANGKAP DATA
     $namaKota = mysqli_real_escape_string($koneksi, $_POST['nama_kota']);
@@ -40,6 +49,7 @@ if (isset($_POST['simpan'])) {
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Tambah Kota</title>
@@ -47,20 +57,28 @@ if (isset($_POST['simpan'])) {
     <link rel="stylesheet" href="../../css/styles.css">
     <style>
         /* STYLE KHUSUS BIAR FONT PUTIH */
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             background-color: #2c3e50 !important;
             color: #ffffff !important;
             border: 1px solid #4a5f7f !important;
         }
-        .form-control:focus, .form-select:focus {
+
+        .form-control:focus,
+        .form-select:focus {
             background-color: #34495e !important;
             color: #ffffff !important;
             border-color: #3498db !important;
             box-shadow: none;
         }
-        label { color: #bdc3c7; margin-bottom: 5px; }
+
+        label {
+            color: #bdc3c7;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
+
 <body>
     <?php include '../header.php'; ?>
     <div class="d-flex-wrapper">
@@ -85,7 +103,7 @@ if (isset($_POST['simpan'])) {
                                 <label>Pilih Provinsi</label>
                                 <select name="id_provinsi" class="form-select" required>
                                     <option value="">-- Pilih Provinsi --</option>
-                                    <?php while($p = $dataProvinsi->fetch_assoc()) { ?>
+                                    <?php while ($p = $dataProvinsi->fetch_assoc()) { ?>
                                         <option value="<?= $p['id_provinsi']; ?>"><?= $p['nama_provinsi']; ?></option>
                                     <?php } ?>
                                 </select>
@@ -104,4 +122,5 @@ if (isset($_POST['simpan'])) {
     <?php include '../footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
