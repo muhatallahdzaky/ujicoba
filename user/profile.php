@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateProfile'])) {
             // Update tanpa password
             if (empty($password_baru)) {
                 $update = "UPDATE users SET nama_lengkap = '$nama_lengkap', email = '$email', no_telepon = '$no_telepon' WHERE id_user = '$user_id'";
-                
+
                 if ($conn->query($update)) {
                     $_SESSION['nama_lengkap'] = $nama_lengkap;
                     $_SESSION['email'] = $email;
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateProfile'])) {
                 } else {
                     $error = "Gagal memperbarui profile!";
                 }
-            } 
+            }
             // Update dengan password
             else {
                 if (empty($password_lama)) {
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updateProfile'])) {
                     $error = "Password baru dan konfirmasi tidak cocok!";
                 } else {
                     $update = "UPDATE users SET nama_lengkap = '$nama_lengkap', email = '$email', no_telepon = '$no_telepon', password = '$password_baru' WHERE id_user = '$user_id'";
-                    
+
                     if ($conn->query($update)) {
                         $_SESSION['nama_lengkap'] = $nama_lengkap;
                         $_SESSION['email'] = $email;
@@ -242,7 +242,7 @@ include '../includes/header.php';
                     <p>Konser di Wishlist</p>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-4">
                 <div class="stat-box">
                     <i class="bi bi-calendar-check"></i>
@@ -250,7 +250,7 @@ include '../includes/header.php';
                     <p>Bergabung Sejak</p>
                 </div>
             </div>
-            
+
             <div class="col-md-4 mb-4">
                 <div class="stat-box">
                     <i class="bi bi-shield-check"></i>
@@ -280,18 +280,18 @@ include '../includes/header.php';
                 <!-- PROFILE FORM -->
                 <div class="profile-card">
                     <h5><i class="bi bi-person-circle"></i> Informasi Akun</h5>
-                    
+
                     <form method="POST" action="">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nama Lengkap</label>
-                                <input type="text" name="nama_lengkap" class="form-control" 
+                                <input type="text" name="nama_lengkap" class="form-control"
                                        value="<?php echo htmlspecialchars($user['nama_lengkap']); ?>" required>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" 
+                                <input type="email" name="email" class="form-control"
                                        value="<?php echo htmlspecialchars($user['email']); ?>" required>
                             </div>
                         </div>
@@ -299,14 +299,14 @@ include '../includes/header.php';
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">No. Telepon</label>
-                                <input type="tel" name="no_telepon" class="form-control" 
-                                       value="<?php echo htmlspecialchars($user['no_telepon']); ?>" 
+                                <input type="tel" name="no_telepon" class="form-control"
+                                       value="<?php echo htmlspecialchars($user['no_telepon']); ?>"
                                        placeholder="08xxxxxxxxxx">
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Role</label>
-                                <input type="text" class="form-control" 
+                                <input type="text" class="form-control"
                                        value="<?php echo ucfirst($user['role']); ?>" disabled>
                             </div>
                         </div>
@@ -319,19 +319,19 @@ include '../includes/header.php';
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Password Lama</label>
-                                <input type="password" name="password_lama" class="form-control" 
+                                <input type="password" name="password_lama" class="form-control"
                                        placeholder="Masukkan password lama">
                             </div>
 
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Password Baru</label>
-                                <input type="password" name="password_baru" class="form-control" 
+                                <input type="password" name="password_baru" class="form-control"
                                        placeholder="Minimal 6 karakter">
                             </div>
 
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Konfirmasi Password</label>
-                                <input type="password" name="konfirmasi_password" class="form-control" 
+                                <input type="password" name="konfirmasi_password" class="form-control"
                                        placeholder="Ulangi password baru">
                             </div>
                         </div>
@@ -373,7 +373,7 @@ include '../includes/header.php';
             <div class="modal-body" style="color: #fff;">
                 <p><strong>Apakah Anda yakin ingin menghapus akun ini?</strong></p>
                 <p class="text-danger mb-0">
-                    <i class="bi bi-exclamation-circle"></i> Peringatan: Tindakan ini tidak dapat dibatalkan! 
+                    <i class="bi bi-exclamation-circle"></i> Peringatan: Tindakan ini tidak dapat dibatalkan!
                     Semua data wishlist Anda akan ikut terhapus.
                 </p>
             </div>
@@ -381,7 +381,7 @@ include '../includes/header.php';
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle"></i> Batal
                 </button>
-                <a href="delete_account.php" class="btn btn-danger">
+                <a href="hapusAkun.php" class="btn btn-danger">
                     <i class="bi bi-trash"></i> Ya, Hapus Akun Saya
                 </a>
             </div>
